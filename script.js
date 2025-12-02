@@ -27,7 +27,17 @@ const grammarRules = [
     { title: "Inversion 倒裝句", content: "用於強調。例如：'Never have I seen such a thing' (而不是 'I have never seen')。" },
     { title: "Participle Clauses 分詞構句", content: "簡化句子。例如：'Walking down the street, I saw him' (相當於 While I was walking...)。" },
     { title: "Cleft Sentences 分裂句", content: "強調句子的特定部分。例如：'It was John who called me' (強調 John)。" },
-    { title: "Mixed Conditionals 混合條件句", content: "混合過去與現在的假設。例如：'If I had studied harder (過去), I would be rich now (現在).'" }
+    { title: "Mixed Conditionals 混合條件句", content: "混合過去與現在的假設。例如：'If I had studied harder (過去), I would be rich now (現在).'" },
+    { title: "Passive Voice 被動語態", content: "強調動作的接受者。例如：'The cake was eaten by the dog.' (強調蛋糕被吃了)。" },
+    { title: "Relative Clauses 關係子句", content: "用來修飾名詞。例如：'The man who called yesterday is here.' (who called yesterday 修飾 man)。" },
+    { title: "Gerunds vs Infinitives 動名詞與不定詞", content: "有些動詞後接 V-ing，有些接 to V。例如：'enjoy swimming' vs 'want to swim'。" },
+    { title: "Modal Verbs 情態動詞", content: "表達能力、義務或可能性。例如：'You must wear a seatbelt.' (義務)。" },
+    { title: "Reported Speech 間接引語", content: "轉述別人的話。例如：He said that he was tired. (原句：'I am tired.')。" },
+    { title: "Future Perfect 未來完成式", content: "表達在未來某個時間點之前將完成的動作。例如：'By next year, I will have graduated.'。" },
+    { title: "Causative Verbs 使役動詞", content: "表示讓某人做某事。例如：'I had him fix my car.' (have, make, let)。" },
+    { title: "Used to vs Be used to", content: "'Used to' 表過去習慣，'Be used to' 表習慣於。例如：'I used to smoke.' vs 'I am used to the noise.'。" },
+    { title: "Articles 冠詞 (A/An/The)", content: "特指或泛指。'The' 用於特定事物，'A/An' 用於非特定。例如：'I saw a cat. The cat was black.'。" },
+    { title: "Prepositions of Time 時間介系詞", content: "At (具體時間), On (天/日期), In (月/年/季節)。例如：'At 5pm, on Monday, in 2024.'。" }
 ];
 
 const phrases = [
@@ -38,7 +48,19 @@ const phrases = [
     { text: "Hit the nail on the head", meaning: "一針見血 - To describe exactly what is causing a situation or problem" },
     { text: "Let the cat out of the bag", meaning: "洩漏秘密 - To reveal a secret carelessly or by mistake" },
     { text: "Once in a blue moon", meaning: "千載難逢/極少 - Very rarely" },
-    { text: "The ball is in your court", meaning: "決定權在你 - It is up to you to make the next decision or step" }
+    { text: "The ball is in your court", meaning: "決定權在你 - It is up to you to make the next decision or step" },
+    { text: "Break the ice", meaning: "打破僵局 - To make people who have not met before feel more relaxed" },
+    { text: "Call it a day", meaning: "到此為止/收工 - To stop doing something, especially working" },
+    { text: "Cost an arm and a leg", meaning: "非常昂貴 - To be very expensive" },
+    { text: "Piece of cake", meaning: "易如反掌 - Something that is very easy to do" },
+    { text: "Under the weather", meaning: "身體不適 - Feeling sick or unwell" },
+    { text: "Spill the beans", meaning: "洩漏秘密 - To reveal secret information unintentionally or indiscreetly" },
+    { text: "Take it with a grain of salt", meaning: "半信半疑 - To not completely believe something that you are told" },
+    { text: "Burn the midnight oil", meaning: "挑燈夜戰/熬夜 - To work late into the night" },
+    { text: "Miss the boat", meaning: "錯失良機 - To be too slow to take advantage of an opportunity" },
+    { text: "On the fence", meaning: "猶豫不決 - Unable to decide between two options" },
+    { text: "See eye to eye", meaning: "看法一致 - To have the same opinion" },
+    { text: "Blessing in disguise", meaning: "塞翁失馬 - A good thing that seemed bad at first" }
 ];
 
 const newsLinks = [
@@ -50,6 +72,8 @@ const newsLinks = [
 
 // State
 let currentWords = [];
+let currentGrammar = [];
+let currentPhrases = [];
 let progress = 0;
 
 // DOM Elements
@@ -65,7 +89,11 @@ const tabContents = document.querySelectorAll('.tab-content');
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
-    loadDailyWords();
+    // Display Date
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('current-date-display').textContent = new Date().toLocaleDateString('en-US', options);
+
+    loadDailyContent();
     renderGrammar();
     renderPhrases();
     renderNews();
@@ -75,16 +103,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Logic
-function loadDailyWords() {
-    // Simple rotation based on day of year to ensure everyone sees same words on same day
+function getDailyContent(array, itemsPerDay) {
     const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
-    const wordsPerDay = 10;
-    const startIndex = (dayOfYear * wordsPerDay) % vocabulary.length;
+    const startIndex = (dayOfYear * itemsPerDay) % array.length;
 
-    currentWords = [];
-    for (let i = 0; i < wordsPerDay; i++) {
-        currentWords.push(vocabulary[(startIndex + i) % vocabulary.length]);
+    let result = [];
+    for (let i = 0; i < itemsPerDay; i++) {
+        result.push(array[(startIndex + i) % array.length]);
     }
+    return result;
+}
+
+function loadDailyContent() {
+    currentWords = getDailyContent(vocabulary, 10);
+    currentGrammar = getDailyContent(grammarRules, 5);
+    currentPhrases = getDailyContent(phrases, 5);
 
     renderVocab();
 }
@@ -108,7 +141,7 @@ function renderVocab() {
 }
 
 function renderGrammar() {
-    grammarContainer.innerHTML = grammarRules.map((rule, index) => `
+    grammarContainer.innerHTML = currentGrammar.map((rule, index) => `
         <div class="card" style="animation-delay: ${index * 0.1}s">
             <div class="card-header">
                 <span class="word" style="font-size: 1.2rem">${rule.title}</span>
@@ -122,7 +155,7 @@ function renderGrammar() {
 }
 
 function renderPhrases() {
-    phrasesContainer.innerHTML = phrases.map((phrase, index) => `
+    phrasesContainer.innerHTML = currentPhrases.map((phrase, index) => `
         <div class="card" style="animation-delay: ${index * 0.1}s">
             <div class="card-header">
                 <span class="word" style="font-size: 1.2rem">${phrase.text}</span>
@@ -150,6 +183,21 @@ function renderNews() {
 function speak(text) {
     window.speechSynthesis.cancel(); // Stop previous
     const utterance = new SpeechSynthesisUtterance(text);
+
+    // Get available voices
+    const voices = window.speechSynthesis.getVoices();
+
+    // Try to find a specific American English voice
+    // Priority: Google US English -> Microsoft Zira -> Microsoft David -> Any en-US
+    const preferredVoice = voices.find(voice => voice.name === 'Google US English') ||
+        voices.find(voice => voice.name.includes('Zira') && voice.lang === 'en-US') ||
+        voices.find(voice => voice.name.includes('David') && voice.lang === 'en-US') ||
+        voices.find(voice => voice.lang === 'en-US');
+
+    if (preferredVoice) {
+        utterance.voice = preferredVoice;
+    }
+
     utterance.lang = 'en-US';
     utterance.rate = 0.9;
     window.speechSynthesis.speak(utterance);
