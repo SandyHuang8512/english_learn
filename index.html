@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily English Mastery</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Daily English Mastery</h1>
+            <p class="subtitle">Your daily dose of TOEIC vocabulary & more</p>
+        </header>
+
+        <nav class="main-nav">
+            <button class="nav-btn active" data-tab="vocab">
+                <i class="fa-solid fa-book-open"></i> Vocabulary 單字
+            </button>
+            <button class="nav-btn" data-tab="grammar">
+                <i class="fa-solid fa-pen-nib"></i> Grammar 文法
+            </button>
+            <button class="nav-btn" data-tab="phrases">
+                <i class="fa-solid fa-comments"></i> Phrases 片語/對話
+            </button>
+            <button class="nav-btn" data-tab="news">
+                <i class="fa-solid fa-newspaper"></i> News 新聞
+            </button>
+        </nav>
+
+        <main>
+            <!-- Vocabulary Section -->
+            <section id="vocab" class="tab-content active">
+                <div class="section-header">
+                    <h2>Today's Words</h2>
+                    <div class="progress-container">
+                        <span>Progress: <span id="progress-count">0</span>/10</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cards-container" id="vocab-container">
+                    <!-- Cards injected by JS -->
+                </div>
+                <div class="actions">
+                    <button id="finish-btn" class="primary-btn">
+                        <i class="fa-solid fa-check-circle"></i> I've Memorized These!
+                    </button>
+                </div>
+            </section>
+
+            <!-- Grammar Section -->
+            <section id="grammar" class="tab-content">
+                <h2>Grammar Focus</h2>
+                <div class="cards-container" id="grammar-container">
+                    <!-- Grammar cards injected by JS -->
+                </div>
+            </section>
+
+            <!-- Phrases Section -->
+            <section id="phrases" class="tab-content">
+                <h2>Common Phrases</h2>
+                <div class="cards-container" id="phrases-container">
+                    <!-- Phrase cards injected by JS -->
+                </div>
+            </section>
+
+            <!-- News Section -->
+            <section id="news" class="tab-content">
+                <h2>Recommended News</h2>
+                <div class="news-list" id="news-container">
+                    <!-- News items injected by JS -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Daily English Mastery. Keep learning!</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
