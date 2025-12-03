@@ -182,25 +182,41 @@ function renderNews() {
 
 function speak(text) {
     window.speechSynthesis.cancel(); // Stop previous
-    const utterance = new SpeechSynthesisUtterance(text);
 
-    // Get available voices
-    const voices = window.speechSynthesis.getVoices();
+    // Wait for voices to load
+    let voices = window.speechSynthesis.getVoices();
 
-    // Try to find a specific American English voice
-    // Priority: Google US English -> Microsoft Zira -> Microsoft David -> Any en-US
-    const preferredVoice = voices.find(voice => voice.name === 'Google US English') ||
-        voices.find(voice => voice.name.includes('Zira') && voice.lang === 'en-US') ||
-        voices.find(voice => voice.name.includes('David') && voice.lang === 'en-US') ||
-        voices.find(voice => voice.lang === 'en-US');
+    // Helper to actually speak
+    const doSpeak = () => {
+        voices = window.speechSynthesis.getVoices();
+        const utterance = new SpeechSynthesisUtterance(text);
 
-    if (preferredVoice) {
-        utterance.voice = preferredVoice;
+        // Prefer high quality voices
+        const preferredVoices = [
+            "Google US English",
+            "Samantha",
+            "Microsoft Zira",
+            "Daniel"
+        ];
+
+        const selectedVoice = voices.find(v => preferredVoices.includes(v.name)) ||
+            voices.find(v => v.lang === 'en-US') ||
+            voices.find(v => v.lang.startsWith('en'));
+
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+        }
+
+        utterance.lang = 'en-US';
+        utterance.rate = 1.0; // Keep the faster speed
+        window.speechSynthesis.speak(utterance);
+    };
+
+    if (voices.length === 0) {
+        window.speechSynthesis.onvoiceschanged = doSpeak;
+    } else {
+        doSpeak();
     }
-
-    utterance.lang = 'en-US';
-    utterance.rate = 1.0;
-    window.speechSynthesis.speak(utterance);
 }
 
 function loadProgress() {
